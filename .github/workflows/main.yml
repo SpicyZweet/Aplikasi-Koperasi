@@ -20,7 +20,7 @@ jobs:
       run: npm install electron electron-packager --save-dev
 
     - name: Copy dist
-      run: mkdir MyApp && xcopy dist MyApp\dist /E /I /Y
+      run: mkdir Aplikasi_Koperasi && C:\Users\Setia Abadi\Documents\MyApp\dist
 
     - name: Create main.js
       run: |

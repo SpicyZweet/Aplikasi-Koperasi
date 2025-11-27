@@ -1,0 +1,43 @@
+name: Build Electron .exe
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install Electron Packager
+      run: npm install electron electron-packager --save-dev
+
+    - name: Copy dist
+      run: mkdir MyApp && xcopy dist MyApp\dist /E /I /Y
+
+    - name: Create main.js
+      run: |
+        echo const { app, BrowserWindow } = require('electron'); > main.js
+        echo const path = require('path'); >> main.js
+        echo function createWindow() { const win = new BrowserWindow({ width: 400, height: 800 }); win.loadFile(path.join(__dirname, 'MyApp/dist/index.html')); } >> main.js
+        echo app.whenReady().then(createWindow); >> main.js
+        echo app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); }); >> main.js
+
+    - name: Init package.json
+      run: npm init -y
+
+    - name: Build .exe
+      run: npx electron-packager . MyApp --platform=win32 --arch=x64 --out=release --overwrite
+
+    - name: Upload .exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: MyApp-exe
+        path: release/MyApp-win32-x64/MyApp.exe

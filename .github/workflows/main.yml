@@ -39,5 +39,5 @@ jobs:
     - name: Upload .exe
       uses: actions/upload-artifact@v3
       with:
-        name: MyApp-exe
+        name: Aplikasi_Koperasi-exe
         path: release/MyApp-win32-x64/MyApp.exe
